@@ -1,18 +1,23 @@
 # Reference from https://wiki.postgresql.org/wiki/Psycopg2_Tutorial
-import psycopg2
+#!/usr/bin/env python
 
-query1 = "select title, count(*) from log join articles on " \
-         " log.path like concat('%', articles.slug, '%') where " \
-         " status = '200 OK' group by title order by count desc;"
-query2 = " select name, count(*) from articles join authors on " \
-         " authors.id = articles.author join log on log.path " \
-         " like concat('%', articles.slug, '%') where " \
-         " log.status = '200 OK' group by authors.name order by count desc;"
-query3 = " select date_trunc('day', time), count (*), " \
-         " (select count(*) from log where status != '200 OK')," \
-         " 100.0 * count (*) / (select count(*) from log where " \
-         " status != '200 OK') ::float from log where " \
-         " status != '200 OK' group by 1 order by 2 desc;"
+import psycopg2
+from datetime import datetime
+
+query1 = """ SELECT title, count(*) FROM log JOIN articles ON
+         log.path = '/article/'||articles.slug
+         WHERE status = '200 OK'
+         GROUP BY title ORDER BY count DESC LIMIT 3;"""
+query2 = """ SELECT name, count(*) FROM articles JOIN authors ON
+         authors.id = articles.author JOIN log ON
+         log.path = '/article/'||articles.slug
+         WHERE log.status = '200 OK'
+         GROUP BY authors.name ORDER BY count DESC;"""
+query3 = """ SELECT DATE(time) AS date,
+        sum(case when status != '200 OK' then 1 else 0 end) AS fail,
+        sum(case when status = '200 OK' then 1 else 0 end) AS success
+        FROM log GROUP BY date ORDER BY date DESC;"""
+
 
 try:
     db = psycopg2.connect("dbname=news")
@@ -34,11 +39,15 @@ try:
 
     print('\n\n\n')
 
-    # query 1
+    # query 3
     cur.execute(query3)
     rows = cur.fetchall()
     for row in rows:
-        print(str(row[0]) + ' , ' + str(row[3]) + '% errors')
+        fail = float(row[1])
+        success = float(row[2])
+        error = fail/success
+        if  error > 0.01:
+            print(str(row[0]) + ' , ' + str(error) + '% errors')
 
 except Exception as e:
     print "I am unable to connect to the database"
