@@ -1,5 +1,6 @@
-# Reference from https://wiki.postgresql.org/wiki/Psycopg2_Tutorial
 #!/usr/bin/env python
+
+# Reference from https://wiki.postgresql.org/wiki/Psycopg2_Tutorial
 
 import psycopg2
 from datetime import datetime
