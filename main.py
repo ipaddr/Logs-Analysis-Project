@@ -13,10 +13,14 @@ query2 = """ SELECT name, count(*) FROM articles JOIN authors ON
          log.path = '/article/'||articles.slug
          WHERE log.status = '200 OK'
          GROUP BY authors.name ORDER BY count DESC;"""
-query3 = """ SELECT DATE(time) AS date,
+query3 = """ SELECT date, 
+        round(100.0 * fail / (success+fail), 2) as percen
+        FROM (
+        SELECT DATE(time) AS date,
         sum(case when status != '200 OK' then 1 else 0 end) AS fail,
         sum(case when status = '200 OK' then 1 else 0 end) AS success
-        FROM log GROUP BY date ORDER BY date DESC;"""
+        FROM log GROUP BY date ORDER BY date DESC) AS date_detail
+        WHERE 100.0 * fail / (success+fail) > 1 ;"""
 
 
 try:
@@ -43,11 +47,7 @@ try:
     cur.execute(query3)
     rows = cur.fetchall()
     for row in rows:
-        fail = float(row[1])
-        success = float(row[2])
-        error = fail/success
-        if  error > 0.01:
-            print(str(row[0]) + ' , ' + str(error) + '% errors')
+            print(str(row[0]) + ' , ' + str(row[1]) + '% errors')
 
 except Exception as e:
     print "I am unable to connect to the database"
