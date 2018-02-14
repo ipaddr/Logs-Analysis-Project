@@ -30,24 +30,27 @@ try:
     # query 1
     cur.execute(query1)
     rows = cur.fetchall()
+    print("\nWhat are the most popular three articles of all time?\n")
     for row in rows:
-        print(str(row[0]) + ' , ' + str(row[1]) + ' views')
+        print("{}, {} views".format(row[0],row[1]))
 
     print('\n\n\n')
 
     # query 2
     cur.execute(query2)
     rows = cur.fetchall()
+    print("\nWho are the most popular article authors of all time? \n")
     for row in rows:
-        print(str(row[0]) + ' , ' + str(row[1]) + ' views')
+        print("{}, {} views".format(row[0],row[1]))
 
     print('\n\n\n')
 
     # query 3
     cur.execute(query3)
     rows = cur.fetchall()
+    print("\nOn which days did more than 1% of requests lead to errors? \n")
     for row in rows:
-            print(str(row[0]) + ' , ' + str(row[1]) + '% errors')
+        print("{}, {}% erros".format(row[0],row[1]))
 
 except Exception as e:
     print "I am unable to connect to the database"
