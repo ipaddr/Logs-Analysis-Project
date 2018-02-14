@@ -13,8 +13,7 @@ query2 = """ SELECT name, count(*) FROM articles JOIN authors ON
          log.path = '/article/'||articles.slug
          WHERE log.status = '200 OK'
          GROUP BY authors.name ORDER BY count DESC;"""
-query3 = """ SELECT date, 
-        round(100.0 * fail / (success+fail), 2) as percen
+query3 = """ SELECT date,round(100.0 * fail / (success+fail), 2) as percen
         FROM (
         SELECT DATE(time) AS date,
         sum(case when status != '200 OK' then 1 else 0 end) AS fail,
@@ -32,7 +31,7 @@ try:
     rows = cur.fetchall()
     print("\nWhat are the most popular three articles of all time?\n")
     for row in rows:
-        print("{}, {} views".format(row[0],row[1]))
+        print("{}, {} views".format(row[0], row[1]))
 
     print('\n\n\n')
 
@@ -41,7 +40,7 @@ try:
     rows = cur.fetchall()
     print("\nWho are the most popular article authors of all time? \n")
     for row in rows:
-        print("{}, {} views".format(row[0],row[1]))
+        print("{}, {} views".format(row[0], row[1]))
 
     print('\n\n\n')
 
@@ -50,7 +49,7 @@ try:
     rows = cur.fetchall()
     print("\nOn which days did more than 1% of requests lead to errors? \n")
     for row in rows:
-        print("{}, {}% erros".format(row[0],row[1]))
+        print("{}, {}% erros".format(row[0], row[1]))
 
 except Exception as e:
     print e
