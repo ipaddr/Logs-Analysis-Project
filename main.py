@@ -53,4 +53,4 @@ try:
         print("{}, {}% erros".format(row[0],row[1]))
 
 except Exception as e:
-    print "I am unable to connect to the database"
+    print e
