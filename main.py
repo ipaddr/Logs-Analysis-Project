@@ -3,7 +3,6 @@
 # Reference from https://wiki.postgresql.org/wiki/Psycopg2_Tutorial
 
 import psycopg2
-from datetime import datetime
 
 query1 = """ SELECT title, count(*) FROM log JOIN articles ON
          log.path = '/article/'||articles.slug
